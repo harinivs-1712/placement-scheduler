@@ -30,30 +30,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [rooms, setRooms] = useState<number | ''>('');
   const [days, setDays] = useState<number | ''>('');
   const [generating, setGenerating] = useState<boolean>(false);
-  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const handleGenerateDataset = async (e: React.FormEvent) => {
     e.preventDefault();
     setGenerating(true);
-    setMessage(null);
+    setMessage({ text: 'Initializing dataset parameter generation...', type: 'info' });
     try {
       const finalStudents = students === '' ? 100 : students;
       const finalCompanies = companies === '' ? 10 : companies;
       const finalRooms = rooms === '' ? 5 : rooms;
       const finalDays = days === '' ? 3 : days;
 
+      // Step 1: Generate Dataset
       await api.generateDataset({
         students: finalStudents,
         companies: finalCompanies,
         rooms: finalRooms,
         days: finalDays
       });
-      setMessage({ text: 'Dataset initialized successfully.', type: 'success' });
+      setMessage({ text: 'Dataset generated successfully.', type: 'success' });
+      
+      // Wait for user to read the success
+      await sleep(1500);
+
+      // Step 2: Show Scheduling
+      setMessage({ text: 'Running scheduling engine to allocate slots and resolve constraints...', type: 'info' });
+      await sleep(1500);
+
+      // Step 3: Trigger Schedule Generator
+      await api.generateSchedule();
+      setMessage({ text: 'Schedule generated successfully. Synchronizing dashboard...', type: 'success' });
+      await sleep(1000);
+
       onDatasetGenerated(finalDays);
       await onRefreshAll();
+      setMessage({ text: 'Dataset and optimal schedule generated successfully! All interview slots allocated.', type: 'success' });
     } catch (err: any) {
       console.error(err);
-      setMessage({ text: err.message || 'Failed to generate dataset.', type: 'error' });
+      setMessage({ text: err.message || 'Failed to generate dataset and schedule.', type: 'error' });
     } finally {
       setGenerating(false);
     }
@@ -95,32 +112,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (!dateStr) return 'N/A';
     try {
       const d = new Date(dateStr);
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } catch {
       return dateStr;
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.4s' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', animation: 'fadeIn 0.4s' }}>
       
-      {/* System Initialization Title */}
-      <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: '600', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-          System Initialization
-        </h1>
-        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-          Configure parameters and generate the mock dataset for scheduler simulation.
-        </p>
-      </div>
+      {/* System Initialization Section (Deck card on Dashboard Home) */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '600', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+            System Initialization
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+            Configure parameters and generate the mock dataset for scheduler simulation.
+          </p>
+        </div>
 
-      {/* System Initialization & Control Deck */}
-      <div className="glass-panel" style={{ padding: '32px 28px', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(9, 13, 21, 0.4)' }}>
-        
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-end' }}>
-          
-          <form onSubmit={handleGenerateDataset} style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', flex: 1, alignItems: 'flex-end' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px', flex: 1 }}>
+        <div className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <form onSubmit={handleGenerateDataset} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '20px'
+            }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Students</label>
                 <input 
@@ -215,7 +234,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 textShadow: '0 0 5px var(--color-purple-glow)',
                 boxShadow: '0 0 8px rgba(168, 85, 247, 0.15)',
                 transition: 'all 0.2s',
-                height: '42px'
+                height: '42px',
+                width: 'fit-content'
               }}
               className="init-btn"
             >
@@ -231,9 +251,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
             borderRadius: '4px',
             fontSize: '0.75rem',
             fontFamily: 'var(--font-mono)',
-            background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-            border: `1px solid ${message.type === 'success' ? 'var(--color-emerald)' : 'var(--color-rose)'}`,
-            color: message.type === 'success' ? 'var(--color-emerald)' : 'var(--color-rose)'
+            background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : message.type === 'info' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(244, 63, 94, 0.1)',
+            border: `1px solid ${message.type === 'success' ? 'var(--color-emerald)' : message.type === 'info' ? 'var(--color-purple)' : 'var(--color-rose)'}`,
+            color: message.type === 'success' ? 'var(--color-emerald)' : message.type === 'info' ? 'var(--color-purple)' : 'var(--color-rose)'
           }}>
             {message.text}
           </div>
