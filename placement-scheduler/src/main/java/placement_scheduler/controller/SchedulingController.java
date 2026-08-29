@@ -7,6 +7,7 @@ import placement_scheduler.service.SchedulingService;
 
 @RestController
 @RequestMapping("/api/schedule")
+@CrossOrigin
 public class SchedulingController {
 
     private final SchedulingService schedulingService;

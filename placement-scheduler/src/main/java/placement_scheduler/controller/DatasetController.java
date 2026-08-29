@@ -7,6 +7,7 @@ import placement_scheduler.service.DatasetGeneratorService;
 
 @RestController
 @RequestMapping("/api/dataset")
+@CrossOrigin
 public class DatasetController {
 
     private final DatasetGeneratorService datasetGeneratorService;
