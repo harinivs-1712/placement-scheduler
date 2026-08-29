@@ -15,9 +15,7 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({
   totalInterviewsCount,
-  scheduledCount,
   unscheduledCount,
-  placementDays,
   onRefreshAll,
   onDatasetGenerated,
   activeTab,
@@ -63,9 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const successRate = totalInterviewsCount > 0 
-    ? Math.round((scheduledCount / totalInterviewsCount) * 100) 
-    : 0;
+
 
   return (
     <aside className="glass-panel" style={{
@@ -296,42 +292,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <hr style={{ borderColor: 'var(--border-color)' }} />
-        
-        {/* KPI Telemetry */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-            <span>Success Rate:</span>
-            <span className="mono-text" style={{ fontWeight: 'bold', color: 'var(--color-cyan)' }}>{successRate}%</span>
-          </div>
-          <div style={{ height: '4px', background: '#1e293b', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{
-              width: `${successRate}%`,
-              height: '100%',
-              background: 'linear-gradient(90deg, var(--color-purple), var(--color-cyan))',
-              boxShadow: '0 0 5px var(--color-cyan-glow)'
-            }} />
-          </div>
-        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-          <span>Placement Days:</span>
-          <span className="mono-text" style={{ color: 'var(--color-cyan)' }}>{placementDays}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-          <span>Total interviews:</span>
-          <span className="mono-text">{totalInterviewsCount}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-          <span>Scheduled:</span>
-          <span className="mono-text" style={{ color: 'var(--color-emerald)' }}>{scheduledCount}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-          <span>Unscheduled:</span>
-          <span className="mono-text" style={{ color: 'var(--color-rose)' }}>{unscheduledCount}</span>
-        </div>
-      </div>
     </aside>
   );
 };

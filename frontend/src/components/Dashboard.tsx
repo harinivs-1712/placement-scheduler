@@ -301,78 +301,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* Unscheduled Reasons Log */}
-      <div className="glass-panel" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-primary)' }}>
-              Unscheduled Interviews Audit Log
-            </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              List of interviews left unscheduled with detailed explanation tracking.
-            </p>
-          </div>
-          <span className="badge badge-rose" style={{ fontFamily: 'var(--font-mono)' }}>
-            {unscheduledReasons.length} UNPLACED
-          </span>
-        </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          {unscheduledReasons.length === 0 ? (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '32px',
-              color: 'var(--text-muted)',
-              gap: '8px'
-            }}>
-              <CheckCircle2 size={24} style={{ color: 'var(--color-emerald)', opacity: 0.5 }} />
-              <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>ALL INTERVIEWS SUCCESSFULLY SCHEDULED</span>
-            </div>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                  <th style={{ padding: '8px 12px' }}>Reason ID</th>
-                  <th style={{ padding: '8px 12px' }}>Interview ID</th>
-                  <th style={{ padding: '8px 12px' }}>Student</th>
-                  <th style={{ padding: '8px 12px' }}>Company</th>
-                  <th style={{ padding: '8px 12px' }}>Constraint Violation Reason</th>
-                  <th style={{ padding: '8px 12px', textAlign: 'right' }}>Logged Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {unscheduledReasons.map((ur) => (
-                  <tr key={ur.reasonId} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', color: 'var(--text-secondary)' }}>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)' }}>#{ur.reasonId}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)' }}>#{ur.interview?.interviewId}</td>
-                    <td style={{ padding: '10px 12px', fontWeight: '500', color: 'var(--text-primary)' }}>
-                      {ur.interview?.studentName || `Student ${ur.interview?.interviewId}`}
-                    </td>
-                    <td style={{ padding: '10px 12px' }}>
-                      {ur.interview?.companyName || 'N/A'}
-                    </td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)' }}>
-                      <span style={{ 
-                        color: ur.reason.includes('STUDENT') ? 'var(--color-amber)' : 
-                               ur.reason.includes('PANEL') ? 'var(--color-purple)' : 
-                               ur.reason.includes('ROOM') ? 'var(--color-rose)' : 'var(--color-cyan)'
-                      }}>
-                        {ur.reason}
-                      </span>
-                    </td>
-                    <td style={{ padding: '10px 12px', textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-                      {formatTime(ur.loggedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
       
     </div>
   );
