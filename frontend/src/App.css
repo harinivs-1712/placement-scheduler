@@ -1,0 +1,43 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1.2s linear infinite;
+}
+
+/* Glass panel glow animation variations */
+.pulse-glow-rose:hover {
+  animation: pulseGlowRose 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlowRose {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.35);
+    border-color: var(--color-rose);
+  }
+}
+
+.pulse-glow-cyan:hover {
+  animation: pulseGlowCyan 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlowCyan {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(6, 182, 212, 0.15);
+    border-color: rgba(6, 182, 212, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.35);
+    border-color: var(--color-cyan);
+  }
+}

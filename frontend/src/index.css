@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* Futuristic Console Theme */
+  --bg-primary: #07090e;
+  --bg-secondary: #0d111a;
+  --bg-tertiary: #131926;
+  --bg-glass: rgba(13, 17, 26, 0.7);
+  --bg-glass-active: rgba(22, 28, 45, 0.8);
+  
+  --border-color: #1e293b;
+  --border-glow: rgba(6, 182, 212, 0.15);
+  --border-glow-active: rgba(6, 182, 212, 0.4);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  /* Accent Colors */
+  --color-cyan: #06b6d4;
+  --color-cyan-glow: rgba(6, 182, 212, 0.35);
+  --color-purple: #a855f7;
+  --color-purple-glow: rgba(168, 85, 247, 0.35);
+  --color-emerald: #10b981;
+  --color-emerald-glow: rgba(16, 185, 129, 0.25);
+  --color-rose: #f43f5e;
+  --color-rose-glow: rgba(244, 63, 94, 0.35);
+  --color-amber: #f59e0b;
+  --color-amber-glow: rgba(245, 158, 11, 0.25);
+  
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-family: var(--font-sans);
+  color-scheme: dark;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+}
+
+.glass-panel:hover {
+  border-color: var(--text-muted);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-glow);
+}
+
+.glass-panel.active {
+  border-color: var(--color-cyan);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--color-cyan-glow);
+}
+
+/* Glowing Telemetry Labels */
+.text-glow-cyan {
+  text-shadow: 0 0 10px var(--color-cyan-glow);
+}
+
+.text-glow-purple {
+  text-shadow: 0 0 10px var(--color-purple-glow);
+}
+
+.text-glow-rose {
+  text-shadow: 0 0 10px var(--color-rose-glow);
+}
+
+.text-glow-emerald {
+  text-shadow: 0 0 10px var(--color-emerald-glow);
+}
+
+/* Micro-animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--color-cyan-glow);
+    border-color: rgba(6, 182, 212, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px var(--color-cyan-glow);
+    border-color: var(--color-cyan);
+  }
+}
+
+.pulse-glow-cyan {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes blinkRed {
+  0%, 100% {
+    background-color: rgba(244, 63, 94, 0.1);
+    border-color: rgba(244, 63, 94, 0.3);
+    color: var(--text-secondary);
+  }
+  50% {
+    background-color: rgba(244, 63, 94, 0.3);
+    border-color: var(--color-rose);
+    color: var(--text-primary);
+    text-shadow: 0 0 5px var(--color-rose-glow);
+  }
+}
+
+.blink-critical {
+  animation: blinkRed 1.5s infinite ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Utility Layouts */
+.command-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+}
+
+@media (max-width: 1200px) {
+  .command-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mono-text {
+  font-family: var(--font-mono);
+}
+
+/* Tab button formatting */
+.tab-button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+.tab-button.active {
+  color: var(--color-cyan);
+  background: rgba(6, 182, 212, 0.1);
+  border-color: var(--color-cyan);
+}
+
+/* Status indicator badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+.badge-cyan {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--color-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-rose {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--color-rose);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.badge-amber {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-amber);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Overriding index.css defaults for the command center root */
+#root {
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  border-inline: none;
+  min-height: 100vh;
+  display: block;
+  box-sizing: border-box;
+}
