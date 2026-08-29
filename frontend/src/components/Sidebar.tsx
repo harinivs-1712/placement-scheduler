@@ -36,7 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Cpu className="text-glow-cyan" style={{ color: 'var(--color-cyan)', width: '28px', height: '28px' }} />
         <div>
           <h2 style={{ fontSize: '1.1rem', fontWeight: '700', letterSpacing: '0.05em', color: 'var(--text-primary)' }}>
-            PLACEMENT SCHEDULER
+            PLACEMENT INTERVIEW SCHEDULER
           </h2>
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             v2.1 // DISRUPTION OPS

@@ -18,6 +18,10 @@ import placement_scheduler.repository.PanelRepository;
 import placement_scheduler.repository.RoomRepository;
 import placement_scheduler.repository.ShortlistRepository;
 import placement_scheduler.repository.StudentRepository;
+import placement_scheduler.repository.DisruptionEventRepository;
+import placement_scheduler.repository.InterviewChangeRepository;
+import placement_scheduler.repository.ReplanRunRepository;
+import placement_scheduler.repository.UnscheduledReasonRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,6 +44,10 @@ public class DatasetGeneratorService {
     private final PanelRepository panelRepository;
     private final ShortlistRepository shortlistRepository;
     private final InterviewRepository interviewRepository;
+    private final DisruptionEventRepository disruptionEventRepository;
+    private final InterviewChangeRepository interviewChangeRepository;
+    private final ReplanRunRepository replanRunRepository;
+    private final UnscheduledReasonRepository unscheduledReasonRepository;
 
     // Seeded on demand — see generateDataset(..., seed). Defaults to a
     // fresh random seed so normal runs still produce varied data, but a
@@ -59,7 +67,11 @@ public class DatasetGeneratorService {
             RoomRepository roomRepository,
             PanelRepository panelRepository,
             ShortlistRepository shortlistRepository,
-            InterviewRepository interviewRepository) {
+            InterviewRepository interviewRepository,
+            DisruptionEventRepository disruptionEventRepository,
+            InterviewChangeRepository interviewChangeRepository,
+            ReplanRunRepository replanRunRepository,
+            UnscheduledReasonRepository unscheduledReasonRepository) {
 
         this.studentRepository = studentRepository;
         this.companyRepository = companyRepository;
@@ -68,6 +80,10 @@ public class DatasetGeneratorService {
         this.panelRepository = panelRepository;
         this.shortlistRepository = shortlistRepository;
         this.interviewRepository = interviewRepository;
+        this.disruptionEventRepository = disruptionEventRepository;
+        this.interviewChangeRepository = interviewChangeRepository;
+        this.replanRunRepository = replanRunRepository;
+        this.unscheduledReasonRepository = unscheduledReasonRepository;
     }
 
     /**
@@ -269,7 +285,12 @@ public class DatasetGeneratorService {
 
         System.out.println("Clearing existing dataset...");
 
-        // Delete dependent records first
+        // Delete dependent records first to avoid foreign key violations
+        unscheduledReasonRepository.deleteAll();
+        interviewChangeRepository.deleteAll();
+        replanRunRepository.deleteAll();
+        disruptionEventRepository.deleteAll();
+
         interviewRepository.deleteAll();
         shortlistRepository.deleteAll();
 
