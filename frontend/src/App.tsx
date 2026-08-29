@@ -58,7 +58,7 @@ function App() {
       if (results[4].status === 'fulfilled') setPanels(results[4].value);
       if (results[5].status === 'fulfilled') setReplanRuns(results[5].value);
       if (results[6].status === 'fulfilled') setUnscheduledReasons(results[6].value);
-      if (results[8].status === 'fulfilled') setInterviewChanges(results[8].value);
+      if (results[7].status === 'fulfilled') setInterviewChanges(results[7].value);
 
       const baseInterviews = results[0].status === 'fulfilled' ? results[0].value : [];
       const reasonsList = results[6].status === 'fulfilled' ? results[6].value : [];
@@ -206,14 +206,10 @@ function App() {
     <div className="command-grid" style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
       {/* Sidebar Control Deck */}
       <Sidebar
-        totalInterviewsCount={interviews.length}
-        scheduledCount={scheduledInterviews.length}
-        unscheduledCount={unscheduledInterviews.length}
-        placementDays={placementDays}
         onRefreshAll={refreshAllData}
-        onDatasetGenerated={handleDatasetGenerated}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        unscheduledCount={unscheduledInterviews.length}
       />
 
       {/* Main Operations Panel */}
@@ -232,6 +228,8 @@ function App() {
             interviews={interviews}
             scheduledCount={scheduledInterviews.length}
             unscheduledCount={unscheduledInterviews.length}
+            onRefreshAll={refreshAllData}
+            onDatasetGenerated={handleDatasetGenerated}
           />
         )}
 

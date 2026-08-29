@@ -428,7 +428,7 @@ export const DisruptionConsole: React.FC<DisruptionConsoleProps> = ({
                 cursor: 'pointer'
               }}
             >
-              Delay (Fut.)
+              Company Delay
             </button>
           </div>
 

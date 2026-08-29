@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { ReplanRun, UnscheduledReason, Interview } from '../services/api';
 import { TrendingUp, AlertOctagon, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { api } from '../services/api';
 
 interface DashboardProps {
   replanRuns: ReplanRun[];
@@ -8,6 +9,8 @@ interface DashboardProps {
   interviews: Interview[];
   scheduledCount: number;
   unscheduledCount: number;
+  onRefreshAll: () => Promise<void>;
+  onDatasetGenerated: (days: number) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -15,10 +18,48 @@ export const Dashboard: React.FC<DashboardProps> = ({
   unscheduledReasons,
   interviews,
   scheduledCount,
-  unscheduledCount
+  unscheduledCount,
+  onRefreshAll,
+  onDatasetGenerated
 }) => {
   const totalCount = interviews.length;
   const successRate = totalCount > 0 ? Math.round((scheduledCount / totalCount) * 100) : 0;
+
+  const [students, setStudents] = useState<number | ''>('');
+  const [companies, setCompanies] = useState<number | ''>('');
+  const [rooms, setRooms] = useState<number | ''>('');
+  const [days, setDays] = useState<number | ''>('');
+  const [generating, setGenerating] = useState<boolean>(false);
+  const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  const handleGenerateDataset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGenerating(true);
+    setMessage(null);
+    try {
+      const finalStudents = students === '' ? 100 : students;
+      const finalCompanies = companies === '' ? 10 : companies;
+      const finalRooms = rooms === '' ? 5 : rooms;
+      const finalDays = days === '' ? 3 : days;
+
+      await api.generateDataset({
+        students: finalStudents,
+        companies: finalCompanies,
+        rooms: finalRooms,
+        days: finalDays
+      });
+      setMessage({ text: 'Dataset initialized successfully.', type: 'success' });
+      onDatasetGenerated(finalDays);
+      await onRefreshAll();
+    } catch (err: any) {
+      console.error(err);
+      setMessage({ text: err.message || 'Failed to generate dataset.', type: 'error' });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+
 
   // Compute bottleneck counts from unscheduled reasons
   const bottleneckCounts: Record<string, number> = {
@@ -63,6 +104,142 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.4s' }}>
       
+      {/* System Initialization Title */}
+      <div>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: '600', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+          System Initialization
+        </h1>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          Configure parameters and generate the mock dataset for scheduler simulation.
+        </p>
+      </div>
+
+      {/* System Initialization & Control Deck */}
+      <div className="glass-panel" style={{ padding: '32px 28px', display: 'flex', flexDirection: 'column', gap: '20px', background: 'rgba(9, 13, 21, 0.4)' }}>
+        
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-end' }}>
+          
+          <form onSubmit={handleGenerateDataset} style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', flex: 1, alignItems: 'flex-end' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '18px', flex: 1 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Students</label>
+                <input 
+                  type="number" 
+                  value={students} 
+                  placeholder="e.g. 100"
+                  onChange={(e) => setStudents(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                  style={{
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid var(--border-color)',
+                    color: 'white',
+                    borderRadius: '4px',
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    fontFamily: 'var(--font-mono)'
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Companies</label>
+                <input 
+                  type="number" 
+                  value={companies} 
+                  placeholder="e.g. 10"
+                  onChange={(e) => setCompanies(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                  style={{
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid var(--border-color)',
+                    color: 'white',
+                    borderRadius: '4px',
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    fontFamily: 'var(--font-mono)'
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Rooms</label>
+                <input 
+                  type="number" 
+                  value={rooms} 
+                  placeholder="e.g. 5"
+                  onChange={(e) => setRooms(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                  style={{
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid var(--border-color)',
+                    color: 'white',
+                    borderRadius: '4px',
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    fontFamily: 'var(--font-mono)'
+                  }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Placement Days</label>
+                <input 
+                  type="number" 
+                  value={days} 
+                  placeholder="e.g. 3"
+                  onChange={(e) => setDays(e.target.value === '' ? '' : parseInt(e.target.value) || 0)}
+                  style={{
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid var(--border-color)',
+                    color: 'white',
+                    borderRadius: '4px',
+                    padding: '10px 14px',
+                    fontSize: '0.9rem',
+                    fontFamily: 'var(--font-mono)'
+                  }}
+                />
+              </div>
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={generating}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--color-purple)',
+                color: 'var(--color-purple)',
+                padding: '10px 24px',
+                borderRadius: '4px',
+                fontSize: '0.875rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                fontFamily: 'var(--font-mono)',
+                textShadow: '0 0 5px var(--color-purple-glow)',
+                boxShadow: '0 0 8px rgba(168, 85, 247, 0.15)',
+                transition: 'all 0.2s',
+                height: '42px'
+              }}
+              className="init-btn"
+            >
+              <RefreshCw size={14} className={generating ? 'animate-spin' : ''} />
+              {generating ? 'GENERATING...' : 'GENERATE DATASET'}
+            </button>
+          </form>
+        </div>
+
+        {message && (
+          <div style={{
+            padding: '8px 12px',
+            borderRadius: '4px',
+            fontSize: '0.75rem',
+            fontFamily: 'var(--font-mono)',
+            background: message.type === 'success' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
+            border: `1px solid ${message.type === 'success' ? 'var(--color-emerald)' : 'var(--color-rose)'}`,
+            color: message.type === 'success' ? 'var(--color-emerald)' : 'var(--color-rose)'
+          }}>
+            {message.text}
+          </div>
+        )}
+      </div>
+
       {/* Header telemetry status bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
